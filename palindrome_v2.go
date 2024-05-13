@@ -7,15 +7,10 @@ import (
 
 var digs = "0123456789abcdefghijklmnopqrstuvwxyz"
 
-//	func DigitsInBase(x, base int) int {
-//		return int(math.Floor(
-//			math.Log(float64(x))/math.Log(float64(base)),
-//		)) + 2 // Yes, a 2. It's correct, please continue reading.
-//	}
 func DigitsInBase(x, base int) int {
 	return int(math.Floor(
 		math.Log(float64(x))/math.Log(float64(base)),
-	)) + 2
+	)) + 2 // Yes, a 2. It's correct, please continue reading.
 }
 
 func NumberToBase_v2(n, base int) string {
