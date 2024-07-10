@@ -2,7 +2,10 @@ module github.com/doctordesh/palindromes
 
 go 1.22.0
 
-require github.com/pkg/profile v1.7.0
+require (
+	github.com/doctordesh/check v0.0.0-20240207065046-eba349000778
+	github.com/pkg/profile v1.7.0
+)
 
 require (
 	github.com/felixge/fgprof v0.9.3 // indirect
