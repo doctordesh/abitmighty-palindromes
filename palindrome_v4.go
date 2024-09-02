@@ -1,147 +1,90 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
-var DIGITS = []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}
+func generateWithLength(length, base int, cb func([]byte) bool) bool {
+	// if length < 1 {
+	// 	return true
+	// }
 
-func ComputeValue(b []byte, base int) int {
-	sum := 0
-	bx := float64(base)
-	bl := len(b)
-	blf := float64(bl)
-	for i := float64(0); i < blf; i++ {
-		sum += int(b[bl-int(i)-1]) * int(math.Pow(bx, i))
-	}
+	// if length == 1 {
+	// 	for i := byte(1); i < byte(base); i++ {
+	// 		done := cb([]byte{i})
+	// 		if done {
+	// 			return true
+	// 		}
+	// 	}
+	// 	return false
+	// }
 
-	return sum
-}
+	half_length := length / 2 // intentional integer division, rounds down
+	from := int(math.Pow(float64(base), float64(half_length-1)))
+	to := int(math.Pow(float64(base), float64(half_length)))
 
-func NumberOfPalindromes(digits, base int) int {
-	dimensions := int(float64(digits)/2 + 0.5)
-	for d := 0; d < dimensions; d++ {
-
-	}
-	return int(math.Pow(float64(base), float64(dimensions)))
-}
-
-// func Palindromes(digits, base int) {
-// 	dimensions := int(float64(digits)/2 + 0.5)
-// 	fmt.Printf("Digi: %d, Dim: %d, Base: %d\n", digits, dimensions, base)
-// 	for d := 0; d < dimensions; d++ {
-
-// 	}
-// }
-
-func Palindromes(nrDigits, base int) int {
-	digits := DIGITS[0:base]
-	sum := 0
-
-	for d := 0; d < nrDigits; d++ {
-
-		sum += ComputeValue(digits, base)
-		fmt.Println(digits, d)
-	}
-
-	return sum
-}
-
-func PalindromesOfSize(n, base int) []string {
-	digits := make([]byte, n)
-
-	for di := byte(0); di < byte(base); di++ {
-		for i := 0; i < int(float64(n/2)+0.5); i++ {
-			digits[i] = di
-			digits[n-i-1] = di
-
-			fmt.Println(digits, di)
+	if length%2 == 1 { // odd
+		for y := from; y < to; y++ {
+			for x := 0; x < base; x++ {
+				done := cb(computeExpandedForm(y, x, length, half_length, base))
+				if done {
+					return true
+				}
+			}
+		}
+	} else { // even
+		for y := from; y < to; y++ {
+			done := cb(computeExpandedForm(y, 0, length, half_length, base))
+			if done {
+				return true
+			}
 		}
 	}
 
-	// p := []string{}
-
-	// cols := int(float64(n)/2 + 0.5)
-	// for digit := 0; digit < base; digit++ {
-	// 	// number := make([]byte, n)
-	// 	for i := 0; i < cols; i++ {
-
-	// 	}
-	// }
-
-	// for col := 0; col < cols; col++ {
-	// 	for digit := 0; digit < base; digit++ {
-	// 		number := make([]byte, n)
-
-	// 	}
-	// }
-
-	// for pos := 0; pos < n; pos++ {
-	// 	number := make([]byte, pos+1)
-
-	// 	for i := 0; i < pos+1; i++ {
-	// 		for j := 0; j < base; j++ {
-	// 			number[i] = '0'
-	// 			number[pos-i] = '0'
-	// 		}
-	// 	}
-
-	// 	p = append(p, string(number))
-	// }
-	return []string{}
+	return false
 }
 
-/*
+func computePalindromeValue(p []byte, base int) int {
+	sum := 0
+	for i := 0; i < len(p); i++ {
+		sum += int(p[len(p)-i-1]) * int(math.Pow(float64(base), float64(i)))
+	}
 
-   n and n+1 is close to equal. Middle 'column' is just doubled
+	return sum
+}
 
-   n = 1
+func computeExpandedForm(y, x, length, half_length, base int) []byte {
+	number := make([]byte, length)
+	for hl := 0; hl < half_length; hl++ {
+		number[hl] = byte(y / int(math.Pow(float64(base), float64(half_length-hl-1))) % base)
+		number[length-hl-1] = number[hl]
+	}
+	if length%2 != 0 { // odd
+		number[half_length] = byte(x)
+	}
+	return number
+}
 
-   0
-   1
-   2
+func PalindromeSum_v4(limit int) (int, int) {
+	sum := 0
+	count := 0
 
-   n = 2
-   00
-   11
-   22
+	cb := func(palindrome []byte) bool {
+		// fmt.Println(palindrome)
+		value := computePalindromeValue(palindrome, 22)
+		if value >= limit {
+			return true
+		}
 
-   n = 3
-   010
-   020
-   030
-   0k0
+		sum += value
+		count += 1
+		return false
+	}
 
-   101
-   111
-   121
-   131
+	digits := 1
+	for generateWithLength(digits, 22, cb) == false {
+		digits += 1
+	}
 
-   n = 4
-
-   0110
-   0220
-   0330
-   0440
-
-   1001
-   1111
-   1221
-   1331
-   1441
-
-   n = 5
-
-   00100
-   00200
-   00300
-
-   01010
-   01110
-   01210
-   01310
-   01410
-
-
-*/
+	return sum, count
+}

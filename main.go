@@ -37,6 +37,8 @@ func main() {
 		sum, count = PalindromeSum_v2(limit)
 	case "v3":
 		sum, count = PalindromeSum_v3(limit)
+	case "v4":
+		sum, count = PalindromeSum_v4(limit)
 	default:
 		fmt.Printf("no option for '%s'\n", flag.Args()[0])
 		os.Exit(2)
