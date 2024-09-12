@@ -1,6 +1,6 @@
 module github.com/doctordesh/palindromes
 
-go 1.22.0
+go 1.23
 
 require (
 	github.com/doctordesh/check v0.0.0-20240207065046-eba349000778
